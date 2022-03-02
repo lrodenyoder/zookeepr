@@ -39,14 +39,32 @@ function filterByQuery(query, animalsArray) {
         filteredResults = filteredResults.filter(animal => animal.name === query.name);
     }
     return filteredResults;
-}
+};
+
+function findById(id, animalsArray) {
+    //takes id and array of animals and returns a single animal object
+    const result = animalsArray.filter(animal => animal.id === id)[0];
+    return result;
+};
 
 app.get('/api/animals', (req, res) => {
     let results = animals;
+    //req.query is multifaceted and can combine multiple parameters
     if (req.query) {
         results = filterByQuery(req.query, results);
     }
     res.json(results);
+});
+
+//param route must come after the other get route
+app.get('/api/animals/:id', (req, res) => {
+    //req.params is a specific property, usually to retrieve a single record
+    const result = findById(req.params.id, animals);
+    if (result) {
+        res.json(result);
+    } else {
+        res.send(404);
+    }
 });
 
 app.listen(PORT, (req, res) => {
